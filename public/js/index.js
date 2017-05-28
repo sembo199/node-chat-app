@@ -13,9 +13,9 @@ socket.on('newMessage', function (message) {
 });
 
 socket.on('newUser', function (message) {
-  console.log(`${message.from}: ${message.text}`);
+  console.log('newUser', message);
 });
 
 socket.on('newUserNotify', function (message) {
-  console.log(`${message.from}: ${message.text}`);
+  console.log('newUserNotify', message);
 });
