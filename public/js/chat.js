@@ -83,6 +83,7 @@ jQuery('#message-form').on('submit', function (e) {
     text: messageTextbox.val()
   }, function () {
     messageTextbox.val('');
+    messageTextbox.focus();
   });
 });
 
@@ -104,4 +105,11 @@ locationButton.on('click', function () {
     alert('Unable to fetch location.');
     locationButton.removeAttr('disabled').text('Send location');
   });
+});
+
+var textField = jQuery('#textField');
+var messages = jQuery('#messages');
+var scrollHeight = messages.prop('scrollHeight');
+textField.on('click', function () {
+  messages.scrollTop(scrollHeight);
 });
