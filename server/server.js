@@ -77,10 +77,3 @@ io.on('connection', (socket) => {
 server.listen(port, () => {
   console.log(`Server is up on port ${port}`);
 });
-
-// New features to add:
-// --------------------
-// Add roomname in tab / sidebar DONE
-// To make chatrooms Case-Insensitive DONE
-// To make usernames unique, reject new users with existing name
-// Add a list of currently active rooms

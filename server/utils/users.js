@@ -1,14 +1,3 @@
-[{
-  id: '1234123412345234',
-  name: 'Sem',
-  room: 'The Office Fans'
-}]
-
-// addUser (id, name, room)
-// removeUser(id)
-// getUser(id)
-// getUserList(room)
-
 class Users {
   constructor () {
     this.users = [];
@@ -35,10 +24,12 @@ class Users {
     var namesArray = users.map((user) => user.name);
     return namesArray;
   }
+  getRoomNames () {
+    var rooms = _.uniq(this.users, (user) => {
+      return user.room;
+    });
+    return rooms;
+  }
 }
 
 module.exports = {Users};
-
-// var me = new User('Sem', 20);
-// var description = me.getUserDescription();
-// console.log(description);
