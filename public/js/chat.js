@@ -78,12 +78,14 @@ jQuery('#message-form').on('submit', function (e) {
   e.preventDefault();
 
   var messageTextbox = jQuery('[name=message]');
+  var messages = jQuery('#messages');
+  var scrollHeight = messages.prop('scrollHeight');
 
   socket.emit('createMessage', {
     text: messageTextbox.val()
   }, function () {
     messageTextbox.val('');
-    messageTextbox.focus();
+    messages.scrollTop(scrollHeight);
   });
 });
 
