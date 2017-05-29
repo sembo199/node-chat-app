@@ -27,6 +27,7 @@ io.on('connection', (socket) => {
     socket.join(params.room);
     users.removeUser(socket.id);
     users.addUser(socket.id, params.name, params.room);
+    socket.emit('setRoomName', params.room);
     io.to(params.room).emit('updateUserList', users.getUserList(params.room));
 
     socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app!'));
@@ -72,3 +73,10 @@ io.on('connection', (socket) => {
 server.listen(port, () => {
   console.log(`Server is up on port ${port}`);
 });
+
+// New features to add:
+// --------------------
+// Add roomname in tab / sidebar
+// To make chatrooms Case-Insensitive
+// To make usernames unique, reject new users with existing name
+// Add a list of currently active rooms

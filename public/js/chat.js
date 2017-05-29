@@ -33,6 +33,11 @@ socket.on('disconnect', function () {
   console.log('Disconnected from server!');
 });
 
+socket.on('setRoomName', function(room) {
+  jQuery('title').text(room + " | ChatApp");
+  jQuery('#chat__sidebar__title').text(`People in ${room}:`);
+});
+
 socket.on('updateUserList', function (users) {
   var ol = jQuery('<ol></ol>');
 
