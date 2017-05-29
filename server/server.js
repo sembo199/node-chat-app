@@ -2,6 +2,7 @@ const path = require('path');
 const http = require('http');
 const express = require('express');
 const socketIO = require('socket.io');
+const _ = require('lodash');
 
 const {generateMessage, generateLocationMessage} = require('./utils/message');
 const {isRealString} = require('./utils/validation');
@@ -23,15 +24,15 @@ io.on('connection', (socket) => {
     if (!isRealString(params.name) || !isRealString(params.room)) {
       return callback('Name and room name are required.');
     }
-
-    socket.join(params.room);
+    var roomname = _.toLower(params.room);
+    socket.join(roomname);
     users.removeUser(socket.id);
-    users.addUser(socket.id, params.name, params.room);
-    socket.emit('setRoomName', params.room);
-    io.to(params.room).emit('updateUserList', users.getUserList(params.room));
+    users.addUser(socket.id, params.name, roomname);
+    socket.emit('setRoomName', _.capitalize(roomname));
+    io.to(roomname).emit('updateUserList', users.getUserList(roomname));
 
     socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app!'));
-    socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has joined!`));
+    socket.broadcast.to(roomname).emit('newMessage', generateMessage('Admin', `${params.name} has joined!`));
 
     // io.emit -> to every connected user
     // socket.broadcast.emit -> to everyone connected except current user
@@ -44,9 +45,10 @@ io.on('connection', (socket) => {
 
   socket.on('createMessage', (message, callback) => {
     var user = users.getUser(socket.id);
+    var userRoom = _.toLower(user.room);
 
     if (user && isRealString(message.text)) {
-      io.to(user.room).emit('newMessage', generateMessage(user.name, message.text));
+      io.to(userRoom).emit('newMessage', generateMessage(user.name, message.text));
     }
 
     callback();
@@ -54,18 +56,20 @@ io.on('connection', (socket) => {
 
   socket.on('createLocationMessage', (coords) => {
     var user = users.getUser(socket.id);
+    var userRoom = _.toLower(user.room);
 
     if (user) {
-      io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords.latitude, coords.longitude));
+      io.to(userRoom).emit('newLocationMessage', generateLocationMessage(user.name, coords.latitude, coords.longitude));
     }
   });
 
   socket.on('disconnect', () => {
     var user = users.removeUser(socket.id);
+    var userRoom = _.toLower(user.room);
 
     if (user) {
-      io.to(user.room).emit('updateUserList', users.getUserList(user.room));
-      io.to(user.room).emit('newMessage', generateMessage('Admin', `${user.name} has left.`));
+      io.to(userRoom).emit('updateUserList', users.getUserList(userRoom));
+      io.to(userRoom).emit('newMessage', generateMessage('Admin', `${user.name} has left.`));
     }
   });
 });
@@ -76,7 +80,7 @@ server.listen(port, () => {
 
 // New features to add:
 // --------------------
-// Add roomname in tab / sidebar
-// To make chatrooms Case-Insensitive
+// Add roomname in tab / sidebar DONE
+// To make chatrooms Case-Insensitive DONE
 // To make usernames unique, reject new users with existing name
 // Add a list of currently active rooms
